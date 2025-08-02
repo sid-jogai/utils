@@ -1,0 +1,10 @@
+PROG="./uwc"
+
+hyperfine -w 3 "$PROG testdata/repeats_small.txt"
+hyperfine -w 3 "$PROG testdata/bible.txt"
+hyperfine -w 3 "$PROG testdata/sqlite3.txt"
+hyperfine -w 3 "$PROG testdata/repeats_medium.txt"
+hyperfine -w 3 "$PROG testdata/bible10.txt"
+hyperfine -w 3 "$PROG testdata/bible100.txt"
+hyperfine -w 3 "$PROG testdata/bible1000.txt"
+hyperfine -w 3 "$PROG testdata/repeats_large.txt"

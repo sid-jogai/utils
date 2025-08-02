@@ -19,21 +19,21 @@ whitespace(u8 c)
 }
 
 static Counter
-count_unique_words(u8 *buf, i64 len)
+count_unique_words(Str buf)
 {
 	Counter counter = {0};
 
 	bool in_word = false;
-	for (u8 *p = buf; p < buf+len;) {
+	for (u8 *p = buf.b; p < buf.b+buf.len;) {
 		if (!in_word) {
-			while (p<buf+len && whitespace(*p))
+			while (p<buf.b+buf.len && whitespace(*p))
 				p++;
 			in_word = true;
 			continue;
 		}
 
 		u8 *word = p;
-		while (p<buf+len && !whitespace(*p))
+		while (p<buf.b+buf.len && !whitespace(*p))
 			p++;
 		in_word = false;
 		Str s = {word, p-word};
@@ -87,11 +87,10 @@ main(int argc, char *argv[])
 
 	char *path = argv[1];
 	MemMap m;
-	if (!memmap_readonly(path, &m)) {
-		return 2;
-	}
+	if (!memmap_readonly(path, &m))
+		return EXIT_FAILURE;
 
-	Counter counter = count_unique_words(m.b, m.len);
+	Counter counter = count_unique_words((Str){m.b, m.len});
 	report(counter, max_entries);
 	m.unmap(&m);
 }

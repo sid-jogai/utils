@@ -11,4 +11,10 @@ debug:
 clean:
 	rm -rf uwc uwc_debug uwc_debug.dSYM
 
-.PHONY: all debug clean
+testdata:
+	bash gettestdata.sh
+
+benchmark:
+	bash benchmark.sh
+
+.PHONY: all debug clean testdata benchmark
