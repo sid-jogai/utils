@@ -21,39 +21,40 @@ whitespace(u8 c)
 static Counter
 count_unique_words(u8 *buf, i64 len)
 {
-	Counter c = {0};
+	Counter counter = {0};
 
 	bool in_word = false;
 	for (u8 *p = buf; p < buf+len;) {
-		if (in_word) {
-			u8 *word = p;
-			while (p<buf+len && !whitespace(*p))
+		if (!in_word) {
+			while (p<buf+len && whitespace(*p))
 				p++;
-			i64 len = p-word;
-			in_word = false;
-
-			Count *kv = getcount(&c, (Str){.b = word, len});
-			if (!kv->s.len) {
-				Str s = {.b = alloc(0, 0, len, 1), .len = len};
-				memcpy(s.b, word, len);
-				kv->s = s;
-				c.len++;
-			}
-			kv->count++;
-		} else {
-			for (; p<buf+len && whitespace(*p); p++)
-				;
 			in_word = true;
+			continue;
 		}
+
+		u8 *word = p;
+		while (p<buf+len && !whitespace(*p))
+			p++;
+		in_word = false;
+		Str s = {word, p-word};
+
+		Count *c = getcount(&counter, s);
+		if (!c->s.len) {
+			s.b = alloc(0, 0, s.len, 1);
+			memcpy(s.b, word, s.len);
+			c->s = s;
+			counter.len++;
+		}
+		c->n++;
 	}
 
-	return c;
+	return counter;
 }
 
 static int
 compare_count(const void *x, const void *y)
 {
-	return ((Count *)y)->count - ((Count *)x)->count;
+	return ((Count *)y)->n - ((Count *)x)->n;
 }
 
 static void
@@ -66,15 +67,22 @@ report(Counter c, i64 n)
 
 	i64 i = 0;
 	for (Count *p = c.counts; p<c.counts+c.len && p->s.len && i<n; p++, i++)
-		printf("%.*s: %lld\n", (int)p->s.len, p->s.b, p->count);
+		printf("%.*s: %lld\n", (int)p->s.len, p->s.b, p->n);
 }
 
 int
 main(int argc, char *argv[])
 {
 	if (argc < 2) {
-		printf("usage: %s <file>\n", argv[0]);
+		printf("usage: %s <file> [max-entries]\n", argv[0]);
 		return 0;
+	}
+
+	i64 max_entries = 10;
+	if (argc == 3) {
+		i64 x = strtol(argv[2], 0, 10);
+		if (x > 0)
+		    max_entries = x;
 	}
 
 	char *path = argv[1];
@@ -84,5 +92,6 @@ main(int argc, char *argv[])
 	}
 
 	Counter counter = count_unique_words(m.b, m.len);
-	report(counter, 10);
+	report(counter, max_entries);
+	m.unmap(&m);
 }

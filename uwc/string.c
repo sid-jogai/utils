@@ -1,10 +1,3 @@
-typedef struct Bytes Bytes;
-struct Bytes {
-	u8	*b;
-	i64	 len;
-	i64	 cap;
-};
-
 typedef struct Str Str;
 struct Str
 {

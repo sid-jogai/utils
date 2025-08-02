@@ -2,13 +2,15 @@
 #define DefaultCap		32
 
 typedef struct Count Count;
-struct Count {
+struct Count
+{
 	Str	s;
-	i64	count;
+	i64	n;
 };
 
 typedef struct Counter Counter;
-struct Counter {
+struct Counter
+{
 	Count	*counts;
 	i64	 len;
 	i64	 cap;
@@ -25,6 +27,7 @@ djb2(Str str)
 	return hash;
 }
 
+/* for debugging */
 static void
 dump_counter(Counter *c, char *name)
 {
@@ -37,7 +40,7 @@ dump_counter(Counter *c, char *name)
 			if (!lastslotempty)
 				puts("~");
 		} else {
-			printf("%lld: %.*s: %lld\n", i, (int)p->s.len, p->s.b, p->count);
+			printf("%lld: %.*s: %lld\n", i, (int)p->s.len, p->s.b, p->n);
 		}
 		lastslotempty = !p->s.len;
 	}
@@ -56,7 +59,8 @@ getcount_no_resize(Counter c, Str s)
 }
 
 static void
-resize_counter(Counter *c, i64 newsize) {
+resize_counter(Counter *c, i64 newsize)
+{
 	assert(newsize >= c->cap);
 
 	if (c->load_factor < 0.1)
@@ -68,7 +72,7 @@ resize_counter(Counter *c, i64 newsize) {
 	if (!c->counts)
 		goto done;
 
-	for (Count *p = c->counts; p < c->counts+c->len; p++)
+	for (Count *p = c->counts; p < c->counts+c->cap; p++)
 		if (p->s.len)
 			*getcount_no_resize(new, p->s) = *p;
 	free(c->counts);

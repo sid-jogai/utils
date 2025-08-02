@@ -6,7 +6,8 @@
 #include <sys/stat.h>
 
 typedef struct MemMap MemMap;
-struct MemMap {
+struct MemMap
+{
 	u8	*b;
 	i64	 len;
 
@@ -22,7 +23,6 @@ unmap_posix(MemMap *m)
 static bool
 memmap_readonly(char *path, MemMap *m)
 {
-	puts(path);
 	int fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return false;

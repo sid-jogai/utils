@@ -1,4 +1,4 @@
-void *
+static void *
 alloc(void *ptr, i64 count, i64 new_count, i64 size)
 {
 	assert(new_count > count);
