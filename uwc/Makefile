@@ -1,6 +1,6 @@
 CC=cc
 DEBUG_FLAGS=-Wall -Wextra -fsanitize=address,undefined -g3
-CFLAGS=-Wall -Wextra -O3
+CFLAGS=-Wall -Wextra -O3 -g3
 
 all:
 	$(CC) $(CFLAGS) main.c -o uwc

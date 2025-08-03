@@ -9,6 +9,7 @@
 #include "defs.h"
 #include "mem.c"
 #include "string.c"
+#include "hash.c"
 #include "counter.c"
 #include "os.c"
 
@@ -40,8 +41,6 @@ count_unique_words(Str buf)
 
 		Count *c = getcount(&counter, s);
 		if (!c->s.len) {
-			s.b = alloc(0, 0, s.len, 1);
-			memcpy(s.b, word, s.len);
 			c->s = s;
 			counter.len++;
 		}
@@ -90,7 +89,9 @@ main(int argc, char *argv[])
 	if (!memmap_readonly(path, &m))
 		return EXIT_FAILURE;
 
-	Counter counter = count_unique_words((Str){m.b, m.len});
+	Counter counter = count_unique_words(m.s);
+
 	report(counter, max_entries);
+
 	m.unmap(&m);
 }

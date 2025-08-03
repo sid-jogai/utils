@@ -29,3 +29,6 @@ yes "seven" | head -n100000000 >> testdata/repeats_large.txt
 yes "eight" | head -n100000000 >> testdata/repeats_large.txt
 yes "nine"  | head -n100000000 >> testdata/repeats_large.txt
 yes "ten"   | head -n100000000 >> testdata/repeats_large.txt
+
+seq 1 100000 > testdata/unique_numbers_small.txt
+seq 1 1000000 > testdata/unique_numbers_medium.txt
